@@ -5,6 +5,8 @@ app = Flask(__name__)
 
 @app.route('/bench', methods=['POST'])
 def bench():
+    if not request.json:
+        return jsonify({'error': 'ты че? махаться будешь?'})
     data = request.json or {}
     dbname = data.get('dbname', 'lamtech_db')
     scale_factor = data.get('scaleFactor', '10')
