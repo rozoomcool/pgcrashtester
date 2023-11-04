@@ -59,6 +59,7 @@ func benchHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	fmt.Println("Start")
 	// exec.Command("sudo -i -u postgres")
 	http.HandleFunc("/bench", benchHandler)
 
