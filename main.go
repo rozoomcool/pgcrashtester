@@ -59,7 +59,7 @@ func benchHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	exec.Command("sudo -i -u postgres")
+	// exec.Command("sudo -i -u postgres")
 	http.HandleFunc("/bench", benchHandler)
 
 	fmt.Println("Server is running on port 8080...")
