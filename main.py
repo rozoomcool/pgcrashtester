@@ -12,6 +12,7 @@ def bench():
     scale_factor = data.get('scaleFactor', 1)
     clients = data.get('clients', 1)
     threads = data.get('threads', 2)
+    seconds = data.get('seconds', 10)
     # Установите переменные окружения для pgbench
     os.environ['PGUSER'] = 'postgres'
     os.environ['PGPASSWORD'] = 'root'
@@ -19,7 +20,7 @@ def bench():
     # init_cmd = ['sudo', '-u', 'postgres', 'pgbench', '-i', '-s', scale_factor, dbname]
     # subprocess.run(init_cmd, check=True)
     # Запуск теста
-    run_cmd = ['sudo', '-u', 'postgres', 'pgbench', '-c', clients, '-j', threads, dbname]
+    run_cmd = ['sudo', '-u', 'postgres', 'pgbench', '-c', clients, '-j', threads, '-T', seconds, dbname]
     process = subprocess.run(run_cmd, capture_output=True, text=True, check=True)
     
     return jsonify({'output': process.stdout})
