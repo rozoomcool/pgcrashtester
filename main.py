@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 @app.route('/bench', methods=['POST'])
 def bench():
-    data = request.json
+    data = request.json or {}
     dbname = data.get('dbname', 'lamtech_db')
     scale_factor = data.get('scaleFactor', '10')
     clients = data.get('clients', '100')
