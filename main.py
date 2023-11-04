@@ -17,7 +17,7 @@ def bench():
     os.environ['PGUSER'] = 'postgres'
     os.environ['PGPASSWORD'] = 'root'
     # Инициализация базы данных для тестирования
-    init_cmd = ['pgbench', '-i', '-s', scale_factor, dbname]
+    init_cmd = ['sudo -u postgres pgbench', '-i', '-s', scale_factor, dbname]
     subprocess.run(init_cmd, check=True)
     # Запуск теста
     run_cmd = ['sudo -u postgres pgbench', '-c', clients, '-j', threads, '-t', transactions, dbname]
