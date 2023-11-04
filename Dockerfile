@@ -1,9 +1,13 @@
-FROM golang:1.21.3-alpine
-# Установите рабочий каталог в /app
+FROM python:3.8-slim
+
 WORKDIR /app
+
+COPY requirements.txt .
+
+RUN pip --no-cache-dir -r requirements.txt
+
 COPY . .
-# Соберите ваше приложение
-RUN go build -o pgbench-api
+
 EXPOSE 8080
-# Запустите приложение при старте контейнера
-CMD ["./pgbench-api"]
+
+CMD ["python", "main.py"]
