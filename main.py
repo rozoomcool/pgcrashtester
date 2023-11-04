@@ -9,10 +9,10 @@ def bench():
         return jsonify({'error': 'ты че? махаться будешь?'})
     data = request.json or {}
     dbname = data.get('dbname', 'lamtech_db')
-    scale_factor = data.get('scaleFactor', '10')
-    clients = data.get('clients', '1000')
+    scale_factor = data.get('scaleFactor', '1')
+    clients = data.get('clients', '1')
     threads = data.get('threads', '2')
-    transactions = data.get('transactions', '50000')
+    transactions = data.get('transactions', '1')
     # Установите переменные окружения для pgbench
     os.environ['PGUSER'] = 'postgres'
     os.environ['PGPASSWORD'] = 'root'
