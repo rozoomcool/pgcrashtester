@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 import subprocess
 import os
+import psutil
 app = Flask(__name__)
 
 @app.route('/bench', methods=['POST'])
@@ -24,6 +25,14 @@ def bench():
     process = subprocess.run(run_cmd, capture_output=True, text=True, check=True)
     
     return jsonify({'output': process.stdout})
+
+@app.route('/performance', methods=['GET'])
+def performance():
+    cpu_usage = psutil.cpu_percent(interval=1)
+    memory = psutil.virtual_memory()
+    partitions = psutil.disk_partitions()
+    
+    return jsonify({'cpu': cpu_usage, 'memory': memory, 'partitions': partitions})
     
     
 if __name__ == '__main__':
