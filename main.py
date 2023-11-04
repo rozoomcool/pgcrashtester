@@ -43,9 +43,9 @@ def performance():
     for part in partitions:
         usage = psutil.disk_usage(part.mountpoint)
         resp['partitions'][usage.device] = {
-            'total': f"{usage.total / (1024**3):.2f} GB",
-            'used': f"{usage.used / (1024**3):.2f} GB",
-            'free': f"{usage.free / (1024**3):.2f} GB",
+            'total': f"{part.total / (1024**3):.2f} GB",
+            'used': f"{part.used / (1024**3):.2f} GB",
+            'free': f"{part.free / (1024**3):.2f} GB",
         }
     
     return jsonify(resp)
