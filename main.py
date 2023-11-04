@@ -49,6 +49,20 @@ def performance():
         }
     
     return jsonify(resp)
+
+@app.route('/restartdb', methods=['GET'])
+def restartdb():
+    run_cmd = ['systemctl', 'restart', 'postgresql']
+    process = subprocess.run(run_cmd, capture_output=True, text=True, check=True)
+    
+    return jsonify(process.stdout)
+
+@app.route('/killdb', methods=['GET'])
+def restartdb():
+    run_cmd = ['kill', '-9', '$(pgrep postgres)']
+    process = subprocess.run(run_cmd, capture_output=True, text=True, check=True)
+    
+    return jsonify(process.stdout)
     
     
 if __name__ == '__main__':
