@@ -3,7 +3,7 @@ import subprocess
 import os
 app = Flask(__name__)
 
-@app.route('/bench', methods=['GET'])
+@app.route('/bench', methods=['POST'])
 def bench():
     data = request.json
     dbname = data.get('dbname', 'lamtech_db')
