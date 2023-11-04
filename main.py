@@ -58,7 +58,7 @@ def restartdb():
     return jsonify(process.stdout)
 
 @app.route('/killdb', methods=['GET'])
-def restartdb():
+def killdb():
     run_cmd = ['kill', '-9', '$(pgrep postgres)']
     process = subprocess.run(run_cmd, capture_output=True, text=True, check=True)
     
