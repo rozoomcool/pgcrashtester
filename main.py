@@ -3,22 +3,22 @@ import subprocess
 import os
 app = Flask(__name__)
 
-@app.route('/bench', methods=['POST'])
+@app.route('/bench', methods=['GET'])
 def bench():
     data = request.json
-    dbname = data.get('dbname')
-    scale_factor = data.get('scaleFactor', '1')
-    clients = data.get('clients', '1')
-    threads = data.get('threads', '1')
-    transactions = data.get('transactions', '1')
+    dbname = data.get('dbname', 'lamtech_db')
+    scale_factor = data.get('scaleFactor', '10')
+    clients = data.get('clients', '100')
+    threads = data.get('threads', '2')
+    transactions = data.get('transactions', '50000')
     # Установите переменные окружения для pgbench
     os.environ['PGUSER'] = 'postgres'
-    os.environ['PGPASSWORD'] = os.getenv('PGPASSWORD')
+    os.environ['PGPASSWORD'] = 'root'
     # Инициализация базы данных для тестирования
     init_cmd = ['pgbench', '-i', '-s', scale_factor, dbname]
     subprocess.run(init_cmd, check=True)
     # Запуск теста
-    run_cmd = ['pgbench', '-c', clients, '-j', threads, '-t', transactions, dbname]
+    run_cmd = ['sudo -u postgres pgbench', '-c', clients, '-j', threads, '-t', transactions, dbname]
     process = subprocess.run(run_cmd, capture_output=True, text=True, check=True)
     
     return jsonify({'output': process.stdout})
