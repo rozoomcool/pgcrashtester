@@ -1,4 +1,4 @@
-FROM golang:1.17-alpine
+FROM golang:1.21.3-alpine
 # Установите рабочий каталог в /app
 WORKDIR /app
 COPY . .
