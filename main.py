@@ -32,7 +32,23 @@ def performance():
     memory = psutil.virtual_memory()
     partitions = psutil.disk_partitions()
     
-    return jsonify({'cpu': cpu_usage, 'memory': memory, 'partitions': partitions})
+    resp = {
+        'cpu': f'{cpu_usage:.2f}%',
+        'memory-total': f"{memory.total / (1024**2):.2f} MB",
+        'memory-used': f"{memory.used / (1024**2):.2f} MB",
+        'memory-free': f"{memory.free / (1024**2):.2f} MB",
+        'partitions': {}
+        }
+    
+    for part in partitions:
+        usage = psutil.disk_usage(part.mountpoint)
+        resp['partitions'][usage.device] = {
+            'total': f"{usage.total / (1024**3):.2f} GB",
+            'used': f"{usage.used / (1024**3):.2f} GB",
+            'free': f"{usage.free / (1024**3):.2f} GB",
+        }
+    
+    return jsonify(resp)
     
     
 if __name__ == '__main__':
