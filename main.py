@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 import subprocess
 import os
 import psutil
+import json
 app = Flask(__name__)
 
 @app.route('/bench', methods=['POST'])
@@ -23,8 +24,13 @@ def bench():
     # Запуск теста
     run_cmd = ['sudo', '-u', 'postgres', 'pgbench', '-c', clients, '-j', threads, '-T', seconds, dbname]
     process = subprocess.run(run_cmd, capture_output=True, text=True, check=True)
-    
-    return jsonify({'output': process.stdout})
+
+    result = process.stdout.split('\n')
+     
+    result.pop(-1)
+    print(result[0])
+
+    return json.dumps(result)
 
 @app.route('/performance', methods=['GET'])
 def performance():
@@ -63,7 +69,60 @@ def killdb():
     process = subprocess.run(run_cmd, capture_output=True, text=True, check=True)
     
     return jsonify(process.stdout)
+
+@app.route('/logs', methods=['GET'])
+def get_logs():
+    run_cmd = ['cp', '/var/log/postgresql/postgresql-12-main.log', 'logs.log']
+    precess = subprocess.run(run_cmd, capture_output=True, text=True, check=True)
     
+    f = open('./logs.log', 'r')
+
+
+    return f.read()
+
+@app.route('/backup', methods=['POST'])
+def backup():
+    os.environ['PGUSER'] = 'postgres'
+    os.environ['PGPASSWORD'] = 'root'
+    
+    run_cmd = ['sudo', '-u', 'postgres', 'pg_dump', '-U', 'postgres', '-d', 'lamtech_db']
+
+    pg_dump_command = [
+    'pg_dump',
+    '-h', 'localhost',    # Хост сервера PostgreSQL
+    '-U', 'postgres',  # Имя пользователя PostgreSQL
+    '-d', 'lamtech_db',  # Имя базы данных
+    '-f', 'backup.sql'     # Имя файла для сохранения резервной копии
+    ]
+
+    # Запуск утилиты pg_dump
+    try:
+        subprocess.run(pg_dump_command, check=True)
+        return "Резервная копия успешно создана"
+    except subprocess.CalledProcessError as e:
+        return f"Произошла ошибка при создании резервной копии: {e}"
+
+@app.route('/restore', methods=['POST'])
+def restore():
+    os.environ['PGUSER'] = 'postgres'
+    os.environ['PGPASSWORD'] = 'root'
+
+    pg_dump_command = [
+    'psql',
+    '-h', 'localhost',    # Хост сервера PostgreSQL
+    '-U', 'postgres',  # Имя пользователя PostgreSQL
+    '-d', 'lamtech_db',  # Имя базы данных
+    '-a',
+    '-f', 'backup.sql'     # Имя файла для сохранения резервной копии
+    ]
+
+    # Запуск утилиты pg_restore
+    try:
+        subprocess.run(pg_dump_command, check=True)
+        return "Резервная копия успешно восстановлена"
+    except subprocess.CalledProcessError as e:
+        return f"Произошла ошибка при восстановлении резервной копии: {e}"
+
     
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=8080)
